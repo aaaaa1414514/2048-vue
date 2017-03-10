@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>2048</title>
+<style>
+*{margin:0;padding:0;}
+li{list-style:none}
+#box{margin:100px auto;width:300px;}
+dd{width:50px;height:50px;float:left;line-height:50px;text-align:center;border:1px solid #fff;background:green;color:#fff;}
+li{width:210px;}
+</style>	
+	<ul id="box" @keyup.37="left" >
+		<li v-for="(item,i) in arr">
+			<dd v-for="(item,j) in item">
+				{{item.num}}
+			</dd>
+		</li>
+	</ul>
+</head>
+<body>
+<script type="text/javascript" src="./vue.js"></script>	
+<script>
+	const vm = new Vue({
+		el:"#box",
+		data:{
+			arr:[
+				[{num:0},{num:0},{num:0},{num:2}],
+				[{num:0},{num:0},{num:0},{num:0}],
+				[{num:0},{num:0},{num:0},{num:0}],
+				[{num:0},{num:0},{num:0},{num:0}]
+			]
+		},
+		created(){
+			window.addEventListener('keydown', this.keyEvent.bind(this));
+		},
+		
+		methods:{
+			keyEvent(e){
+				if(e.keyCode==37){
+					this.each(this.left);
+				}
+			},
+			each(callback){
+				
+				for(let i=0;i<this.arr.length;i++){
+					for(let j=0;j<this.arr[i].length;j++){
+						console.log(1)
+						callback(this.arr,i,j);
+					}
+				}
+			},
+			left(arr,i,j){
+				if(!arr[i][j].num==0){
+					count=arr[i][0].num+arr[i][j].num;
+					arr[i][j].num=0;
+					console.log(count)
+					arr[i][0].num=count;
+				}
+			}
+		}
+	}) 
+
+</script>
+</body>
+</html>
