@@ -5,14 +5,26 @@
 	<title>2048</title>
 <style>
 *{margin:0;padding:0;}
+body{background:black;}
 li{list-style:none}
-#box{margin:100px auto;width:300px;}
-dd{width:50px;height:50px;float:left;line-height:50px;text-align:center;border:1px solid #fff;background:green;color:#fff;}
-li{width:210px;}
+#box{margin:100px auto;width:410px;}
+dd{width:100px;height:100px;float:left;line-height:100px;text-align:center;border:1px solid #fff;background:orange;color:#fff;font-size:24px;}
+li{width:410px;}
+.col2{background:#009fff;}
+.col4{background:blue;}
+.col8{background:red;}
+.col16{background:#00ffc6;}
+.col32{background:black;}
+.col64{background:pink;}
+.col128{background:#9C27B0;}
+.col256{background:#ff008b;}
+.col512{background:#0f3546;}
+.col1024{background:#ff5722;}
+.col2048{background:#4caf50;}
 </style>	
-	<ul id="box" @keyup.37="left" >
+	<ul id="box">
 		<li v-for="(item,i) in arr">
-			<dd v-for="(item,j) in item">
+			<dd v-for="(item,j) in item" :class="{col2:item.num==2,col4:item.num==4,col8:item.num==8,col16:item.num==16,col32:item.num==32,col64:item.num==64,col128:item.num==128,col256:item.num==256,col512:item.num==512,col1024:item.num==1024,col1024:item.num==2048}" >
 				{{item.num}}
 			</dd>
 		</li>
@@ -24,39 +36,112 @@ li{width:210px;}
 	const vm = new Vue({
 		el:"#box",
 		data:{
+			count:0,
 			arr:[
-				[{num:0},{num:0},{num:0},{num:2}],
-				[{num:0},{num:0},{num:0},{num:0}],
-				[{num:0},{num:0},{num:0},{num:0}],
-				[{num:0},{num:0},{num:0},{num:0}]
-			]
+				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}],
+				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}],
+				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}],
+				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}]		
+					
+			],
+			zeroArr:[],
+			ifRandom:false
 		},
 		created(){
-			window.addEventListener('keydown', this.keyEvent.bind(this));
+			window.addEventListener('keydown', this.keyEvent);
 		},
 		
 		methods:{
 			keyEvent(e){
 				if(e.keyCode==37){
 					this.each(this.left);
+				}else if(e.keyCode==39){
+					this.each(this.right);
+				}else if(e.keyCode==40){
+					this.each(this.bottom);
+				}else if(e.keyCode==38){
+					this.each(this.top);
 				}
+				this.each(this.toZeroArr);
+				this.random();
 			},
+			//循环方法
 			each(callback){
-				
 				for(let i=0;i<this.arr.length;i++){
 					for(let j=0;j<this.arr[i].length;j++){
-						console.log(1)
 						callback(this.arr,i,j);
 					}
+					this.count=0;
+				}
+				
+			},//左
+			left(arr,i,j){
+				for(let k=0;k<arr[i].length-1;k++){
+					this.run(arr,i,k,k+1);
+				}
+				
+			},
+			right(arr,i,j){
+				for(let k=arr[i].length-1;k>0;k--){
+					this.run(arr,i,k,k-1);
 				}
 			},
-			left(arr,i,j){
-				if(!arr[i][j].num==0){
-					count=arr[i][0].num+arr[i][j].num;
-					arr[i][j].num=0;
-					console.log(count)
-					arr[i][0].num=count;
+			top(arr,i,j){
+				for(let k=0;k<arr.length-1;k++){
+					this.run(arr,k,j,k+1,true)
 				}
+			},
+			bottom(arr,i,j){
+				for(let k=arr.length-1;k>0;k--){
+					this.run(arr,k,j,k-1,true)
+				}
+			},
+			//有哪些还为0
+			toZeroArr(arr,i,j){
+				if(arr[i][j].num==0){
+					this.zeroArr.push([i,j])
+				}
+			},//随机出现
+			random(){
+				if(!this.ifRandom){
+					return
+				}
+				let i=Math.floor((Math.random()*this.zeroArr.length));
+				let zero=this.zeroArr[i];
+				this.arr[zero[0]][zero[1]].num=2;
+				this.ifRandom=false;
+				this.each(this.allFitTrue)
+				this.zeroArr=[];
+			},//测试
+			run(arr,a,b,c,isLine){
+				if(isLine){
+					if(arr[a][b].num==0&&arr[c][b].num!=0){
+						let temp = arr[c][b].num;
+						arr[c][b].num = 0;
+						arr[a][b].num = temp;
+						this.ifRandom=true;
+					}else if(arr[a][b].num==arr[c][b].num&&arr[a][b].num!=0&&arr[c][b].fit&&arr[a][b].fit){
+						arr[a][b].num = arr[a][b].num*2;
+						arr[c][b].num = 0;
+						arr[a][b].fit = false;
+						this.ifRandom=true;
+					}	
+				}else{
+					if(arr[a][b].num==0&&arr[a][c].num!=0){
+						let temp = arr[a][c].num;
+						arr[a][c].num = 0;
+						arr[a][b].num = temp;
+						this.ifRandom=true;
+					}else if(arr[a][b].num==arr[a][c].num&&arr[a][b].num!=0&&arr[a][c].fit&&arr[a][b].fit){
+						arr[a][b].num = arr[a][b].num*2;
+						arr[a][c].num = 0;
+						arr[a][b].fit = false;
+						this.ifRandom=true;
+					}	
+				}		
+			},
+			allFitTrue(arr,i,j){
+				arr[i][j].fit=true;
 			}
 		}
 	}) 
