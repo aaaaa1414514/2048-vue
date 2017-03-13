@@ -7,8 +7,8 @@
 *{margin:0;padding:0;}
 body{background:black;}
 li{list-style:none}
-#box{margin:100px auto;width:410px;}
-dd{width:100px;height:100px;float:left;line-height:100px;text-align:center;border:1px solid #fff;background:orange;color:#fff;font-size:24px;}
+#box{margin:100px auto;width:410px;position:relative}
+dd{width:100px;height:100px;position:absolute;line-height:100px;text-align:center;border:1px solid #fff;background:orange;color:#fff;font-size:24px;}
 li{width:410px;}
 .col2{background:#009fff;}
 .col4{background:blue;}
@@ -23,8 +23,8 @@ li{width:410px;}
 .col2048{background:#4caf50;}
 </style>	
 	<ul id="box">
-		<li v-for="(item,i) in arr">
-			<dd v-for="(item,j) in item" :class="{col2:item.num==2,col4:item.num==4,col8:item.num==8,col16:item.num==16,col32:item.num==32,col64:item.num==64,col128:item.num==128,col256:item.num==256,col512:item.num==512,col1024:item.num==1024,col1024:item.num==2048}" >
+		<li v-for="(item,i) in showArr">
+			<dd v-for="(item,j) in item" :class="{col2:item.num==2,col4:item.num==4,col8:item.num==8,col16:item.num==16,col32:item.num==32,col64:item.num==64,col128:item.num==128,col256:item.num==256,col512:item.num==512,col1024:item.num==1024,col1024:item.num==2048}" :style="{left:item.x+'px',top:item.y+'px'}">
 				{{item.num}}
 			</dd>
 		</li>
@@ -44,10 +44,14 @@ li{width:410px;}
 				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}]		
 					
 			],
+			showArr:[
+				[{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0},{num:2,x:0,y:0}]
+			],
 			zeroArr:[],
 			ifRandom:false
 		},
 		created(){
+			this.each(this.init,this.showArr)
 			window.addEventListener('keydown', this.keyEvent);
 		},
 		
@@ -66,10 +70,18 @@ li{width:410px;}
 				this.random();
 			},
 			//循环方法
-			each(callback){
-				for(let i=0;i<this.arr.length;i++){
-					for(let j=0;j<this.arr[i].length;j++){
-						callback(this.arr,i,j);
+			init(arr,i,j){
+				arr[i][j].x=j*100;
+				arr[i][j].y=i*100;
+			},
+			each(callback,arr){
+				var tarr=this.arr;
+				if(arr){
+					tarr=this.showArr;
+				}
+				for(let i=0;i<tarr.length;i++){
+					for(let j=0;j<tarr[i].length;j++){
+						callback(tarr,i,j);
 					}
 					this.count=0;
 				}
