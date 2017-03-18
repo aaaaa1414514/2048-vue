@@ -7,11 +7,12 @@
 *{margin:0;padding:0;}
 body{background:#fff;}
 li{list-style:none}
-#box{width:480px;height:480px;margin:100px auto;background:#bbada0;border-radius:10px;padding:10px;position:relative;}
+h2{position:absolute;top:-50px;width:100%;}
+#box{width:480px;height:480px;margin:120px auto;background:#bbada0;border-radius:10px;padding:10px;position:relative;}
 .arr{width:100%;height:100%;}
 .arr dd{width:100px;height:100px;float:left;background:#ccc0b3;margin:10px;border-radius:10px}
 .showUl{width:100%;height:100%;position:absolute;left:0;top:0;left:10px;top:10px;}
-.showUl dd{position:absolute;width:100px;height:100px;text-align:center;line-height:100px;border-radius:10px;font-size:60px;color:rgb(120,110,100);}
+.showUl dd{position:absolute;width:100px;height:100px;text-align:center;line-height:100px;border-radius:10px;font-size:50px;color:rgb(120,110,100);}
 
 
 .col2{background:#eee3da;}
@@ -30,6 +31,7 @@ li{list-style:none}
 .transifrom0{transform:scale(0);}
 </style>	
 <div id="box">
+	<h2 >总分数：{{total}}</h2>
 	<ul class="arr">
 		<li v-for="(item,i) in arr">
 			<dd v-for="(item,j) in item"  >
@@ -54,8 +56,8 @@ li{list-style:none}
 		el:"#box",
 		data:{
 			arr:[
-				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:2,fit:true,count:0}],
-				[{num:0,fit:true,count:0},{num:16,fit:true,count:0},{num:4,fit:true,count:0},{num:32,fit:true,count:0}],
+				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}],
+				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}],
 				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}],
 				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}]
 				
@@ -69,9 +71,12 @@ li{list-style:none}
 			],
 			annimate:true,
 			zeroArr:[],
-			ifRandom:false
+			ifRandom:true,
+			total:0 
 		},
 		created(){
+			this.each(this.toZeroArr);
+			this.random();
 			this.each(this.init,this.showArr)
 			window.addEventListener('keydown', this.keyEvent);
 		},
@@ -94,6 +99,7 @@ li{list-style:none}
 					this.each(this.annimateT);
 					
 				}
+				this.total=0;
 				this.each(this.toZeroArr);
 				this.random();
 				var $this=this;
@@ -217,6 +223,8 @@ li{list-style:none}
 			toZeroArr(arr,i,j){
 				if(arr[i][j].num==0){
 					this.zeroArr.push([i,j])
+				}else{
+					this.total+=arr[i][j].num;
 				}
 			},//随机出现
 			random(){
@@ -228,7 +236,7 @@ li{list-style:none}
 				this.annimate=true;
 				this.ifRandom=false;
 				this.arr[zero[0]][zero[1]].num=2;
-				this.showArr[zero[0]][zero[1]].num=2;
+				
 				this.each(this.allFitTrue)
 				this.zeroArr=[];
 			},
