@@ -5,33 +5,35 @@
 	<title>2048</title>
 <style>
 *{margin:0;padding:0;}
-body{background:black;}
+body{background:#fff;}
 li{list-style:none}
-#box{margin:40px auto;width:410px;}
-.arr{overflow:hidden;}
-dd{width:100px;height:100px;float:left;line-height:100px;text-align:center;border:1px solid #fff;background:orange;color:#fff;font-size:24px;}
-li{width:410px;}
-.col2{background:#009fff;}
-.col4{background:blue;}
-.col8{background:red;}
-.col16{background:#00ffc6;}
-.col32{background:black;}
-.col64{background:pink;}
-.col128{background:#9C27B0;}
-.col256{background:#ff008b;}
+#box{width:480px;height:480px;margin:100px auto;background:#bbada0;border-radius:10px;padding:10px;position:relative;}
+.arr{width:100%;height:100%;}
+.arr dd{width:100px;height:100px;float:left;background:#ccc0b3;margin:10px;border-radius:10px}
+.showUl{width:100%;height:100%;position:absolute;left:0;top:0;left:10px;top:10px;}
+.showUl dd{position:absolute;width:100px;height:100px;text-align:center;line-height:100px;border-radius:10px;font-size:60px;color:rgb(120,110,100);}
+
+
+.col2{background:#eee3da;}
+.col4{background:#ede0c8;}
+.col8{background:#f2b179;color:#fff!important;}
+.col16{background:#f59563;color:#fff!important}
+.col32{background:#f67c5f;color:#fff!important}
+.col64{background:pink;color:#fff!important}
+.col128{background:#edcf72;}
+.col256{background:#ff7025;}
 .col512{background:#0f3546;}
 .col1024{background:#ff5722;}
 .col2048{background:#4caf50;}
-.showUl{width:410px;height:410px;position:relative;margin-top:20px;}
-.showUl dd{position:absolute;width:100px;height:100px;left:0;}
-.transition{transition:all .5s ease;}
+
+.transition{transition:all .8s ease;}
 .transifrom0{transform:scale(0);}
 </style>	
 <div id="box">
 	<ul class="arr">
 		<li v-for="(item,i) in arr">
-			<dd v-for="(item,j) in item" :class="{col2:item.num==2,col4:item.num==4,col8:item.num==8,col16:item.num==16,col32:item.num==32,col64:item.num==64,col128:item.num==128,col256:item.num==256,col512:item.num==512,col1024:item.num==1024,col1024:item.num==2048}" >
-				{{item.num}}
+			<dd v-for="(item,j) in item"  >
+			
 			</dd>
 		</li>
 	</ul>
@@ -53,7 +55,7 @@ li{width:410px;}
 		data:{
 			arr:[
 				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:2,fit:true,count:0}],
-				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}],
+				[{num:0,fit:true,count:0},{num:16,fit:true,count:0},{num:4,fit:true,count:0},{num:32,fit:true,count:0}],
 				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}],
 				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}]
 				
@@ -75,11 +77,9 @@ li{width:410px;}
 		},
 		methods:{
 			keyEvent(e){
-				console.log(this.annimate)
 				if(this.annimate){
 					return
 				}
-				console.log(1)
 				if(e.keyCode==37){
 					this.each(this.left);
 					this.each(this.annimateL);
@@ -101,13 +101,13 @@ li{width:410px;}
 					$this.each($this.init,$this.showArr);
 					this.annimate=true;
 					clearTimeout(timer);
-				},551)
+				},820)
 				
 			},
 			init(arr,i,j){
 				this.annimate=false;
-				arr[i][j].x=j*100;
-				arr[i][j].y=i*100;
+				arr[i][j].x=j*120+10;
+				arr[i][j].y=i*120+10;
 				arr[i][j].num=this.arr[i][j].num;
 			},
 			//循环方法
@@ -195,22 +195,22 @@ li{width:410px;}
 			},
 			annimateL(arr,i,j){
 				if(arr[i][j].count!=0){
-					this.showArr[i][j].x=this.showArr[i][j].x-arr[i][j].count*100;
+					this.showArr[i][j].x=this.showArr[i][j].x-arr[i][j].count*120;
 				}
 			},
 			annimateR(arr,i,j){
 				if(arr[i][j].count!=0){
-					this.showArr[i][j].x=this.showArr[i][j].x+arr[i][j].count*100;
+					this.showArr[i][j].x=this.showArr[i][j].x+arr[i][j].count*120;
 				}
 			},
 			annimateT(arr,i,j){
 				if(arr[i][j].count!=0){
-					this.showArr[i][j].y=this.showArr[i][j].y-arr[i][j].count*100;
+					this.showArr[i][j].y=this.showArr[i][j].y-arr[i][j].count*120;
 				}
 			},
 			annimateB(arr,i,j){
 				if(arr[i][j].count!=0){
-					this.showArr[i][j].y=this.showArr[i][j].y+arr[i][j].count*100;
+					this.showArr[i][j].y=this.showArr[i][j].y+arr[i][j].count*120;
 				}
 			},
 			//有哪些还为0
