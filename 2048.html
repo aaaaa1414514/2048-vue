@@ -7,7 +7,8 @@
 *{margin:0;padding:0;}
 body{background:black;}
 li{list-style:none}
-#box{margin:100px auto;width:410px;}
+#box{margin:40px auto;width:410px;}
+.arr{overflow:hidden;}
 dd{width:100px;height:100px;float:left;line-height:100px;text-align:center;border:1px solid #fff;background:orange;color:#fff;font-size:24px;}
 li{width:410px;}
 .col2{background:#009fff;}
@@ -21,14 +22,28 @@ li{width:410px;}
 .col512{background:#0f3546;}
 .col1024{background:#ff5722;}
 .col2048{background:#4caf50;}
+.showUl{width:410px;height:410px;position:relative;margin-top:20px;}
+.showUl dd{position:absolute;width:100px;height:100px;left:0;}
+.transition{transition:all .5s ease;}
+.transifrom0{transform:scale(0);}
 </style>	
-	<ul id="box">
+<div id="box">
+	<ul class="arr">
 		<li v-for="(item,i) in arr">
 			<dd v-for="(item,j) in item" :class="{col2:item.num==2,col4:item.num==4,col8:item.num==8,col16:item.num==16,col32:item.num==32,col64:item.num==64,col128:item.num==128,col256:item.num==256,col512:item.num==512,col1024:item.num==1024,col1024:item.num==2048}" >
 				{{item.num}}
 			</dd>
 		</li>
 	</ul>
+
+	<ul class="showUl">
+		<li v-for="(item,i) in showArr">
+			<dd v-for="(item,j) in item"  :class="{col2:item.num==2,col4:item.num==4,col8:item.num==8,col16:item.num==16,col32:item.num==32,col64:item.num==64,col128:item.num==128,col256:item.num==256,col512:item.num==512,col1024:item.num==1024,col1024:item.num==2048,transition:annimate,transifrom0:item.num==0}" :style="{left:item.x+'px',top:item.y+'px'}">
+				{{item.num}}
+			</dd>
+		</li>
+	</ul>
+</div>	
 </head>
 <body>
 <script type="text/javascript" src="./vue.js"></script>	
@@ -36,64 +51,166 @@ li{width:410px;}
 	const vm = new Vue({
 		el:"#box",
 		data:{
-			count:0,
 			arr:[
-				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}],
-				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}],
-				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}],
-				[{num:0,fit:true},{num:0,fit:true},{num:0,fit:true},{num:2,fit:true}]		
+				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:2,fit:true,count:0}],
+				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}],
+				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}],
+				[{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0},{num:0,fit:true,count:0}]
+				
 					
 			],
+			showArr:[
+				[{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0}],
+				[{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0}],
+				[{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0}],
+				[{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0},{num:0,x:0,y:0}]
+			],
+			annimate:true,
 			zeroArr:[],
 			ifRandom:false
 		},
 		created(){
+			this.each(this.init,this.showArr)
 			window.addEventListener('keydown', this.keyEvent);
 		},
-		
 		methods:{
 			keyEvent(e){
+				console.log(this.annimate)
+				if(this.annimate){
+					return
+				}
+				console.log(1)
 				if(e.keyCode==37){
 					this.each(this.left);
+					this.each(this.annimateL);
 				}else if(e.keyCode==39){
 					this.each(this.right);
+					this.each(this.annimateR);
 				}else if(e.keyCode==40){
 					this.each(this.bottom);
+					this.each(this.annimateB);
 				}else if(e.keyCode==38){
 					this.each(this.top);
+					this.each(this.annimateT);
+					
 				}
 				this.each(this.toZeroArr);
 				this.random();
+				var $this=this;
+				var timer=setTimeout(function(){
+					$this.each($this.init,$this.showArr);
+					this.annimate=true;
+					clearTimeout(timer);
+				},551)
+				
+			},
+			init(arr,i,j){
+				this.annimate=false;
+				arr[i][j].x=j*100;
+				arr[i][j].y=i*100;
+				arr[i][j].num=this.arr[i][j].num;
 			},
 			//循环方法
-			each(callback){
-				for(let i=0;i<this.arr.length;i++){
-					for(let j=0;j<this.arr[i].length;j++){
-						callback(this.arr,i,j);
+			each(callback,arr){
+				var tarr=this.arr;
+				if(arr){
+					tarr=this.showArr;
+				}
+				for(let i=0;i<tarr.length;i++){
+					for(let j=0;j<tarr[i].length;j++){
+						callback(tarr,i,j);
 					}
-					this.count=0;
 				}
 				
 			},//左
 			left(arr,i,j){
 				for(let k=0;k<arr[i].length-1;k++){
-					this.run(arr,i,k,k+1);
+					if(arr[i][k].num==0&&arr[i][k+1].num!=0){
+						arr[i][k+1+j].count = arr[i][k+j+1].count+1;
+						let temp = arr[i][k+1].num;
+						arr[i][k+1].num = 0;
+						arr[i][k].num = temp;
+						this.ifRandom=true;
+					}else if(arr[i][k].num==arr[i][k+1].num&&arr[i][k].num!=0&&arr[i][k+1].fit&&arr[i][k].fit){
+						arr[i][k+1+j].count = arr[i][k+j+1].count+1;
+						arr[i][k].num = arr[i][k].num*2;
+						arr[i][k+1].num = 0;
+						arr[i][k].fit = false;
+						this.ifRandom=true;
+					}	
 				}
 				
 			},
 			right(arr,i,j){
 				for(let k=arr[i].length-1;k>0;k--){
-					this.run(arr,i,k,k-1);
+					if(arr[i][k].num==0&&arr[i][k-1].num!=0){
+						arr[i][k-1-j].count = arr[i][k-1-j].count+1;
+						let temp = arr[i][k-1].num;
+						arr[i][k-1].num = 0;
+						arr[i][k].num = temp;
+						this.ifRandom=true;
+					}else if(arr[i][k].num==arr[i][k-1].num&&arr[i][k].num!=0&&arr[i][k-1].fit&&arr[i][k].fit){
+						arr[i][k-1-j].count = arr[i][k-1-j].count+1;
+						arr[i][k].num = arr[i][k].num*2;
+						arr[i][k-1].num = 0;
+						arr[i][k].fit = false;
+						this.ifRandom=true;
+					}	
 				}
 			},
 			top(arr,i,j){
 				for(let k=0;k<arr.length-1;k++){
-					this.run(arr,k,j,k+1,true)
+					if(arr[k][j].num==0&&arr[k+1][j].num!=0){
+						arr[k+1+i][j].count = arr[k+1+i][j].count+1;
+						let temp = arr[k+1][j].num;
+						arr[k+1][j].num = 0;
+						arr[k][j].num = temp;
+						this.ifRandom=true;
+					}else if(arr[k][j].num==arr[k+1][j].num&&arr[k][j].num!=0&&arr[k+1][j].fit&&arr[k][j].fit){
+						arr[k+1+i][j].count = arr[k+1+i][j].count+1;
+						arr[k][j].num = arr[k][j].num*2;
+						arr[k+1][j].num = 0;
+						arr[k][j].fit = false;
+						this.ifRandom=true;
+					}	
 				}
+
 			},
 			bottom(arr,i,j){
 				for(let k=arr.length-1;k>0;k--){
-					this.run(arr,k,j,k-1,true)
+					if(arr[k][j].num==0&&arr[k-1][j].num!=0){
+						arr[k-1-i][j].count = arr[k-1-i][j].count+1;
+						let temp = arr[k-1][j].num;
+						arr[k-1][j].num = 0;
+						arr[k][j].num = temp;
+						this.ifRandom=true;
+					}else if(arr[k][j].num==arr[k-1][j].num&&arr[k][j].num!=0&&arr[k-1][j].fit&&arr[k][j].fit){
+						arr[k-1-i][j].count = arr[k-1-i][j].count+1;
+						arr[k][j].num = arr[k][j].num*2;
+						arr[k-1][j].num = 0;
+						arr[k][j].fit = false;
+						this.ifRandom=true;
+					}	
+				}
+			},
+			annimateL(arr,i,j){
+				if(arr[i][j].count!=0){
+					this.showArr[i][j].x=this.showArr[i][j].x-arr[i][j].count*100;
+				}
+			},
+			annimateR(arr,i,j){
+				if(arr[i][j].count!=0){
+					this.showArr[i][j].x=this.showArr[i][j].x+arr[i][j].count*100;
+				}
+			},
+			annimateT(arr,i,j){
+				if(arr[i][j].count!=0){
+					this.showArr[i][j].y=this.showArr[i][j].y-arr[i][j].count*100;
+				}
+			},
+			annimateB(arr,i,j){
+				if(arr[i][j].count!=0){
+					this.showArr[i][j].y=this.showArr[i][j].y+arr[i][j].count*100;
 				}
 			},
 			//有哪些还为0
@@ -108,12 +225,15 @@ li{width:410px;}
 				}
 				let i=Math.floor((Math.random()*this.zeroArr.length));
 				let zero=this.zeroArr[i];
-				this.arr[zero[0]][zero[1]].num=2;
+				this.annimate=true;
 				this.ifRandom=false;
+				this.arr[zero[0]][zero[1]].num=2;
+				this.showArr[zero[0]][zero[1]].num=2;
 				this.each(this.allFitTrue)
 				this.zeroArr=[];
-			},//测试
-			run(arr,a,b,c,isLine){
+			},
+			/*
+			run(arr,a,b,c,isLine,j){
 				if(isLine){
 					if(arr[a][b].num==0&&arr[c][b].num!=0){
 						let temp = arr[c][b].num;
@@ -139,9 +259,10 @@ li{width:410px;}
 						this.ifRandom=true;
 					}	
 				}		
-			},
+			},*/
 			allFitTrue(arr,i,j){
 				arr[i][j].fit=true;
+				arr[i][j].count=0;
 			}
 		}
 	}) 
